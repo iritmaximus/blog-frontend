@@ -17,20 +17,36 @@ const App = () => {
       setBlogs( blogs );
     };
     fetchBlogs();
+
+    const tokenFromStorage = window.localStorage.getItem("token");
+    if (tokenFromStorage) {
+      const user = JSON.parse(tokenFromStorage);
+      console.log(user);
+      setUser(user);
+    }
   }, []);
 
   const handleLogin = async (event) => {
     event.preventDefault();
     console.info("Login pressed...");
+
     const userForToken = {
       username: username,
       password: password
     };
+
     const token = await login(userForToken);
-    console.info("User:", token);
+    console.info("User:", JSON.parse(token));
     if (token) {
       setUser(token);
+      window.localStorage.setItem("token", token);
     }
+  };
+
+  const handleLogout = () => {
+    console.info("Logging out...");
+    window.localStorage.removeItem("token");
+    setUser(null);
   };
 
   if (!user) {
@@ -63,6 +79,7 @@ const App = () => {
       <div>
         <h2>blogs</h2>
         <p>{user.name} logged in</p>
+        <button type="button" onClick={handleLogout}>logout</button>
         {blogs.map(blog =>
           <Blog key={blog.id} blog={blog} />
         )}
