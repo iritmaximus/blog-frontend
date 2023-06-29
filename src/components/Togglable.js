@@ -11,7 +11,7 @@ export const Togglable = props => {
   const showWhenVisible = { display: visible ? "" : "none" };
 
   return (
-    <>
+    <div>
       <div style={hideWhenVisible}>
         <button onClick={toggleVisibility}>{props.buttonLabel}</button>
       </div>
@@ -19,6 +19,6 @@ export const Togglable = props => {
         <button onClick={toggleVisibility}>cancel</button>
         {props.children}
       </div>
-    </>
+    </div>
   );
 };

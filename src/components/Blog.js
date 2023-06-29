@@ -1,15 +1,48 @@
 import React, { useState } from "react"; 
+
 import blogService from "../services/blogs";
 
-export const Blog = ({ blog }) => (
-  <div>
-    {blog.title} {blog.author}
-  </div>  
-);
+
+export const Blog = ({ blog }) => {
+  const [showBlog, setShowBlog] = useState(false);
+
+  const showBlogStyle = { display: showBlog ? "" : "none" }
+  const blogStyle = {
+    paddingTop: 10,
+    paddingLeft: 2,
+    border: 'solid',
+    borderWidth: 1,
+    marginBottom: 5,
+  }
+
+  const toggleShowItem = () => {
+    setShowBlog(!showBlog);
+  }
+
+  return (
+    <div style={blogStyle}>
+      {blog.title}, {blog.author}
+      <button onClick={toggleShowItem}>{showBlog ? "hide" : "view"}</button>
+      <div style={showBlogStyle}>
+        <div>
+          {blog.url}
+        </div>
+        <div>
+          likes {blog.likes}
+          <button>like</button>
+        </div>
+        <div>
+          {blog.user.name}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const Blogs = props => {
   return (
     <div>
+      <h3>List of blogs</h3>
       <div style={{display: props.user ? "" : "none"}}>
       </div>
       {props.blogs.map(blog =>
