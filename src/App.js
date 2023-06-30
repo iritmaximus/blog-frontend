@@ -5,21 +5,12 @@ import { Blogs, BlogForm } from "./components/Blog";
 import { LoginForm } from "./components/Login";
 import { Togglable } from "./components/Togglable";
 
-import blogService from "./services/blogs";
-
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState("");
   const [message, setMessage] = useState(null);
-
   // TODO fix notifications, trigger all useEffect things each time there is a notification
   useEffect(() => {
-    const fetchBlogs = async () => {
-      const blogs = await blogService.getAll();
-      setBlogs(blogs);
-    };
-
     const checkToken = () => {
       const tokenFromStorage = window.localStorage.getItem("token");
       if (tokenFromStorage) {
@@ -34,10 +25,7 @@ const App = () => {
         setMessage(null);
       }, 3000);
     }
-
-    fetchBlogs();
     checkToken();
-
   }, [message]);
 
 
@@ -74,7 +62,6 @@ const App = () => {
       </div>
       <Blogs 
         user={user}
-        blogs={blogs}
         handleLogout={handleLogout}
       />
     </div>

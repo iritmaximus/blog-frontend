@@ -1,10 +1,13 @@
-import React, { useState } from "react"; 
+import React, { useState, useEffect } from "react"; 
+import axios from "axios";
 
 import blogService from "../services/blogs";
+import { parseToken, createConfig } from "../services/token";
 
 
-export const Blog = ({ blog }) => {
+export const Blog = ({ blog, user }) => {
   const [showBlog, setShowBlog] = useState(false);
+  const [likes, setLikes] = useState(null);
 
   const showBlogStyle = { display: showBlog ? "" : "none" };
   const blogStyle = {
@@ -15,9 +18,36 @@ export const Blog = ({ blog }) => {
     marginBottom: 5,
   };
 
+  useEffect(() => {
+    if (!likes) {
+      setLikes(blog.likes);
+    }
+  }, [])
+
   const toggleShowItem = () => {
     setShowBlog(!showBlog);
   };
+
+  const handleLike = async (blog, token) => {
+    console.log("Liked post");
+    let newLikes = 0;
+
+    const config = createConfig(parseToken(token));
+    if (!likes) {
+      newLikes = blog.likes + 1;
+    } else {
+      newLikes = likes + 1;
+    }
+    try {
+      const result = await axios.put("/api/blogs/" + blog.id, { likes: newLikes }, config);
+      console.log(result.data);
+      if (result.data.likes) {
+        setLikes(result.data.likes);
+      }
+    } catch (e) {
+      console.error("Couldn't update likes", e);
+    }
+  }
 
   return (
     <div style={blogStyle}>
@@ -28,8 +58,8 @@ export const Blog = ({ blog }) => {
           {blog.url}
         </div>
         <div>
-          likes {blog.likes}
-          <button>like</button>
+          likes {likes}
+          <button onClick={() => handleLike(blog, user.token)}>like</button>
         </div>
         <div>
           {blog.user.name}
@@ -40,13 +70,22 @@ export const Blog = ({ blog }) => {
 };
 
 export const Blogs = props => {
+  const [blogs, setBlogs] = useState([]);
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      const blogs = await blogService.getAll();
+      setBlogs(blogs);
+    };
+    fetchBlogs();
+  }, [])
   return (
     <div>
       <h3>List of blogs</h3>
       <div style={{display: props.user ? "" : "none"}}>
       </div>
-      {props.blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+      {blogs.map(blog =>
+        <Blog key={blog.id} blog={blog} user={props.user} />
       )}
     </div>
   );
