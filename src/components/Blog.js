@@ -6,18 +6,18 @@ import blogService from "../services/blogs";
 export const Blog = ({ blog }) => {
   const [showBlog, setShowBlog] = useState(false);
 
-  const showBlogStyle = { display: showBlog ? "" : "none" }
+  const showBlogStyle = { display: showBlog ? "" : "none" };
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
-    border: 'solid',
+    border: "solid",
     borderWidth: 1,
     marginBottom: 5,
-  }
+  };
 
   const toggleShowItem = () => {
     setShowBlog(!showBlog);
-  }
+  };
 
   return (
     <div style={blogStyle}>

@@ -27,7 +27,7 @@ const App = () => {
         console.info("Logged in as:", user);
         setUser(user);
       }
-    }
+    };
 
     if (message) {
       setTimeout(() => {
