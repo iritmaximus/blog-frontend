@@ -73,12 +73,24 @@ export const Blogs = props => {
   const [blogs, setBlogs] = useState([]);
 
   useEffect(() => {
+    const sortByLikes = (blogA, blogB) => {
+      if (blogA.likes < blogB.likes) {
+        return -1;
+      }
+      if (blogA.likes > blogB.likes) {
+        return 1;
+      }
+      return 0;
+    };
+
     const fetchBlogs = async () => {
       const blogs = await blogService.getAll();
+      blogs.sort(sortByLikes).reverse();
       setBlogs(blogs);
     };
     fetchBlogs();
-  }, [])
+  }, []);
+
   return (
     <div>
       <h3>List of blogs</h3>
