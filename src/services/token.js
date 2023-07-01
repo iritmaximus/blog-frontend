@@ -2,12 +2,13 @@ export const parseToken = token => {
   if (token) {
     return "Bearer " + token;
   }
-  console.error("No token given");
-  return;
+  throw Error("No token given");
 };
 
 export const createConfig = token => {
-  return {
-    headers: { Authorization: token }
-  };
+  if (token) {
+    return {
+      headers: { Authorization: token }
+    };
+  }
 };

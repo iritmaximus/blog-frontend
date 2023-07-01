@@ -6,11 +6,13 @@ import blogService from "../services/blogs";
 import { parseToken, createConfig } from "../services/token";
 
 
-export const Blog = ({ blog, user, updateBlogs }) => {
+export const Blog = props => {
   const [showBlog, setShowBlog] = useState(false);
-  const [likes, setLikes] = useState(null);
   const [sameUserStyle, setSameUserStyle] = useState({display: "none"});
 
+  const toggleShowItem = () => {
+    setShowBlog(!showBlog);
+  };
 
   const showBlogStyle = { display: showBlog ? "" : "none" };
   const blogStyle = {
@@ -22,51 +24,38 @@ export const Blog = ({ blog, user, updateBlogs }) => {
   };
 
   useEffect(() => {
-    if (!likes) {
-      setLikes(blog.likes);
-    }
-    if (user && blog) {
-      setSameUserStyle({ display: user.username === blog.user.username ? "" : "none" });
+    if (props.user && props.blog) {
+      setSameUserStyle({ display: props.user.username === props.blog.user.username ? "" : "none" });
     }
   }, []);
 
-  const toggleShowItem = () => {
-    setShowBlog(!showBlog);
-  };
-
-  const handleLike = async (blog, token) => {
-    console.log("Liked post");
-    let newLikes = 0;
-
-    const config = createConfig(parseToken(token));
-    if (!likes) {
-      newLikes = blog.likes + 1;
-    } else {
-      newLikes = likes + 1;
-    }
-
-    try {
-      const result = await axios.put("/api/blogs/" + blog.id, { likes: newLikes }, config);
-      console.log(result.data);
-      if (result.data.likes) {
-        setLikes(result.data.likes);
-      }
-    } catch (e) {
-      console.error("Couldn't update likes", e);
-    }
-  };
-  
-  const handleRemove = async (blog, token, updateBlogs) => {
-    if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+  const handleLike = async props => {
+    if (!props.user) {
+      console.error("Not logged in");
       return;
     }
-    console.log("Pressed remove");
-    const config = createConfig(parseToken(token));
+    const newBlog = await blogService.update(props.blog, props.blog.likes + 1, props.user.token);
+    const updatedBlogs = props.blogs.map(blog => {
+      if (blog.id === newBlog.id) { 
+        blog.likes = newBlog.likes;
+        return blog
+      } else {
+        return blog;
+      }});
+    props.setBlogs(updatedBlogs);
+    console.log("Liked post");
+  };
+  
+  const handleRemove = async props => {
+    if (!window.confirm(`Remove blog ${props.blog.title} by ${props.blog.author}?`)) {
+      return;
+    }
+
+    const config = createConfig(parseToken(props.user.token));
     try {
-      const result = await axios.delete("/api/blogs/" + blog.id, config);
-      console.log(result.data);
-      // this could be a bad idea but it works...
-      await updateBlogs();
+      const result = await axios.delete("/api/blogs/" + props.blog.id, config);
+      console.log(result.data.message);
+      props.setBlogs(props.blogs.filter(blog => blog.id !== props.blog.id));
     } catch (e) {
       console.error("Failed to remove blog", e);
     }
@@ -74,20 +63,20 @@ export const Blog = ({ blog, user, updateBlogs }) => {
 
   return (
     <div style={blogStyle}>
-      {blog.title}, {blog.author}
+      {props.blog.title}, {props.blog.author}
       <button onClick={toggleShowItem}>{showBlog ? "hide" : "view"}</button>
       <div style={showBlogStyle}>
         <div>
-          {blog.url}
+          {props.blog.url}
         </div>
         <div>
-          likes {likes}
-          <button onClick={() => handleLike(blog, user.token)}>like</button>
+          likes {props.blog.likes}
+          <button onClick={() => handleLike(props)}>like</button>
         </div>
         <div>
-          {blog.user.name}
+          {props.blog.user.name}
         </div>
-        <button style={sameUserStyle} onClick={() => handleRemove(blog, user.token, updateBlogs)}>remove</button>
+        <button style={sameUserStyle} onClick={() => handleRemove(props)}>remove</button>
       </div>
     </div>
   );
@@ -98,12 +87,8 @@ export const Blogs = props => {
 
   const fetchBlogs = async () => {
       const sortByLikes = (blogA, blogB) => {
-        if (blogA.likes < blogB.likes) {
-          return -1;
-        }
-        if (blogA.likes > blogB.likes) {
-          return 1;
-        }
+        if (blogA.likes > blogB.likes) { return 1; }
+        if (blogA.likes < blogB.likes) { return -1; }
         return 0;
       };
 
@@ -123,7 +108,14 @@ export const Blogs = props => {
       <div style={{display: props.user ? "" : "none"}}>
       </div>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} user={props.user} updateBlogs={fetchBlogs}/>
+        <Blog 
+          key={blog.id} 
+          blog={blog} 
+          blogs={blogs}
+          user={props.user} 
+          updateBlogs={fetchBlogs} 
+          setBlogs={setBlogs}
+        />
       )}
     </div>
   );
@@ -183,16 +175,17 @@ export const BlogForm = props => {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired,
+  user: PropTypes.object,
   updateBlogs: PropTypes.func.isRequired,
+  setBlogs: PropTypes.func.isRequired,
 };
 
 Blogs.propTypes = {
-  user: PropTypes.object.isRequired,
+  user: PropTypes.object,
   handleLogout: PropTypes.func.isRequired,
 };
 
 BlogForm.propTypes = {
-  user: PropTypes.object.isRequired,
+  user: PropTypes.object,
   setMessage: PropTypes.func.isRequired,
 };

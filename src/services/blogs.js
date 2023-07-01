@@ -13,8 +13,8 @@ const getAll = () => {
 
 const create = async (newBlog, token) => {
   const config = createConfig(parseToken(token));
-
   console.info("Making POST to", baseUrl, "with", newBlog, config);
+
   try {
     const result = await axios.post(baseUrl, newBlog, config);
     return result;
@@ -23,8 +23,22 @@ const create = async (newBlog, token) => {
       console.error(e.response.data.error);
       return;
     }
-    console.error("Oh no...");
+    console.error("Oh no...", e);
   }
 };
 
-export default { getAll, create };
+const update = async (blog, newLikes, token) => {
+  try {
+    const config = createConfig(parseToken(token));
+    console.info("Making PUT to", baseUrl, {likes: newLikes}, config);
+
+    const result = await axios.put("/api/blogs/" + blog.id, { likes: newLikes }, config);
+    console.info("Result:", result.data);
+    return result.data;
+  } catch (e) {
+    console.error("Couldn't update likes,", e.response.data.error);
+    return blog;
+  }
+}
+
+export default { getAll, create, update };

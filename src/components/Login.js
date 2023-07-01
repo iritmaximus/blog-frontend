@@ -8,7 +8,7 @@ export const LoginForm = props => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = async (event) => {
+  const handleLogin = async event => {
     event.preventDefault();
     console.info("Login pressed...");
 
@@ -19,9 +19,12 @@ export const LoginForm = props => {
 
     const token = await login(userForToken);
     if (token) {
+      const tokenJSON = JSON.stringify(token);
+
       props.setUser(token);
-      window.localStorage.setItem("token", token);
       props.setMessage("Login successful");
+      window.localStorage.setItem("token", tokenJSON)
+      console.log("Logged in");
     } else {
       props.setMessage("Incorrect username or password");
     }
