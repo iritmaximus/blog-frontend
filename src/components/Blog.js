@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"; 
 import axios from "axios";
+import PropTypes from "prop-types";
 
 import blogService from "../services/blogs";
 import { parseToken, createConfig } from "../services/token";
@@ -178,4 +179,20 @@ export const BlogForm = props => {
       </form>
     </div>
   );
+};
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  updateBlogs: PropTypes.func.isRequired,
+};
+
+Blogs.propTypes = {
+  user: PropTypes.object.isRequired,
+  handleLogout: PropTypes.func.isRequired,
+};
+
+BlogForm.propTypes = {
+  user: PropTypes.object.isRequired,
+  setMessage: PropTypes.func.isRequired,
 };

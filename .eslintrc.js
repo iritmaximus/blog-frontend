@@ -1,4 +1,4 @@
-// .eslintrc.js example
+// eslint-disable-next-line
 module.exports = {
   "env": {
       "browser": true,

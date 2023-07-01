@@ -7,7 +7,7 @@ import { Togglable } from "./components/Togglable";
 
 
 const App = () => {
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState({});
   const [message, setMessage] = useState(null);
   // TODO fix notifications, trigger all useEffect things each time there is a notification
   useEffect(() => {
