@@ -174,9 +174,10 @@ export const BlogForm = props => {
 };
 
 Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
   user: PropTypes.object,
+  blog: PropTypes.object.isRequired,
   updateBlogs: PropTypes.func.isRequired,
+  blogs: PropTypes.array.isRequired,
   setBlogs: PropTypes.func.isRequired,
 };
 
