@@ -23,7 +23,7 @@ export const LoginForm = props => {
 
       props.setUser(token);
       props.setMessage("Login successful");
-      window.localStorage.setItem("token", tokenJSON)
+      window.localStorage.setItem("token", tokenJSON);
       console.log("Logged in");
     } else {
       props.setMessage("Incorrect username or password");

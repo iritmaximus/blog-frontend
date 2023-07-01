@@ -39,6 +39,6 @@ const update = async (blog, newLikes, token) => {
     console.error("Couldn't update likes,", e.response.data.error);
     return blog;
   }
-}
+};
 
 export default { getAll, create, update };

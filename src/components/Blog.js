@@ -38,7 +38,7 @@ export const Blog = props => {
     const updatedBlogs = props.blogs.map(blog => {
       if (blog.id === newBlog.id) { 
         blog.likes = newBlog.likes;
-        return blog
+        return blog;
       } else {
         return blog;
       }});
