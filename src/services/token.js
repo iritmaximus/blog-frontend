@@ -10,4 +10,4 @@ export const createConfig = token => {
   return {
     headers: { Authorization: token }
   };
-}
+};
