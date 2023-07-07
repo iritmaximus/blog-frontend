@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react"; 
-import axios from "axios";
 import PropTypes from "prop-types";
 
 import blogService from "../services/blogs";
@@ -51,10 +50,9 @@ export const Blog = props => {
       return;
     }
 
-    const config = createConfig(parseToken(props.user.token));
     try {
-      const result = await axios.delete("/api/blogs/" + props.blog.id, config);
-      console.log(result.data.message);
+      const deletedBlog = await blogService.deleteBlog(props.blog, props.user.token);
+      console.log(deletedBlog);
       props.setBlogs(props.blogs.filter(blog => blog.id !== props.blog.id));
     } catch (e) {
       console.error("Failed to remove blog", e);

@@ -2,8 +2,8 @@ import axios from "axios";
 
 import { parseToken, createConfig } from "./token";
 
-const baseUrl = "/api/blogs";
 
+const baseUrl = "/api/blogs";
 
 const getAll = () => {
   const request = axios.get(baseUrl);
@@ -41,4 +41,18 @@ const update = async (blog, newLikes, token) => {
   }
 };
 
-export default { getAll, create, update };
+const deleteBlog = async (blog, token) => {
+    try {
+        const config = createConfig(parseToken(token));
+        console.info("Making DELETE to", baseUrl, config);
+
+        const result = await axios.delete("/api/blogs/" + blog.id, config);
+        console.info("Result:", result.data);
+        return result.data;
+    } catch (e) {
+        console.error("Could not delete blog,", e);
+        return blog;
+    }
+};
+
+export default { getAll, create, update, deleteBlog };
