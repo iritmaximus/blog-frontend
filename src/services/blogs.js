@@ -1,58 +1,74 @@
-import axios from "axios";
-
-import { parseToken, createConfig } from "./token";
+import { parseToken } from "./token";
 
 
 const baseUrl = "/api/blogs";
 
-const getAll = () => {
-  const request = axios.get(baseUrl);
-  return request.then(response => response.data);
+
+const getAll = async () => {
+  const response = await fetch(baseUrl);
+  const result = await response.json();
+  return result;
 };
 
-
 const create = async (newBlog, token) => {
-  const config = createConfig(parseToken(token));
-  console.info("Making POST to", baseUrl, "with", newBlog, config);
+  const parsedToken = parseToken(token);
+  console.info("Making POST to", baseUrl, "with", newBlog, parsedToken);
 
   try {
-    const result = await axios.post(baseUrl, newBlog, config);
+    const response = await fetch(baseUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": parsedToken
+      },
+      body: JSON.stringify(newBlog)
+    });
+    const result = await response.json();
     return result;
   } catch (e) {
-    if (e.response.status === 401) {
-      console.error(e.response.data.error);
-      return;
-    }
-    console.error("Oh no...", e);
+    console.error("lol", e);
   }
 };
 
 const update = async (blog, newLikes, token) => {
   try {
-    const config = createConfig(parseToken(token));
-    console.info("Making PUT to", baseUrl, {likes: newLikes}, config);
+    const parsedToken = parseToken(token);
+    const url = baseUrl + "/" + blog.id;
+    console.info("Making PUT to", url, {likes: newLikes}, token);
 
-    const result = await axios.put("/api/blogs/" + blog.id, { likes: newLikes }, config);
-    console.info("Result:", result.data);
-    return result.data;
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": parsedToken
+      },
+      body: JSON.stringify({likes: newLikes})
+    });
+    const result = await response.json();
+    console.info(result);
+    return result;
   } catch (e) {
-    console.error("Couldn't update likes,", e.response.data.error);
+    console.error("Not good,", e);
     return blog;
   }
 };
 
-const deleteBlog = async (blog, token) => {
-    try {
-        const config = createConfig(parseToken(token));
-        console.info("Making DELETE to", baseUrl, config);
 
-        const result = await axios.delete("/api/blogs/" + blog.id, config);
-        console.info("Result:", result.data);
-        return result.data;
-    } catch (e) {
-        console.error("Could not delete blog,", e);
-        return blog;
-    }
+const deleteBlog = async (blog, token) => {
+  try {
+    const parsedToken = parseToken(token);
+    const response = await fetch(baseUrl + blog.id, {
+      method: "DELETE",
+      headers: {
+        "Authorization": parsedToken
+      }
+    });
+    const result = await response.json();
+    console.info(result);
+    return result;
+  } catch (e) {
+    console.error("Oh nooo...", e);
+  }
 };
 
 export default { getAll, create, update, deleteBlog };
