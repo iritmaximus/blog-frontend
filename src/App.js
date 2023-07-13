@@ -10,7 +10,6 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState(null);
 
-  // TODO fix notifications, trigger all useEffect things each time there is a notification
   useEffect(() => {
     const checkToken = () => {
       const tokenFromStorage = window.localStorage.getItem("token");
@@ -21,12 +20,16 @@ const App = () => {
       }
     };
 
+    checkToken();
+  }, []);
+  
+  useEffect(() => {
     if (message) {
       setTimeout(() => {
         setMessage(null);
       }, 3000);
     }
-    checkToken();
+
   }, [message]);
 
 
