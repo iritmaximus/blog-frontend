@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 import blogService from "../services/blogs";
-import { parseToken, createConfig } from "../services/token";
 
 
 export const Blog = props => {
@@ -23,7 +22,7 @@ export const Blog = props => {
   };
 
   useEffect(() => {
-    if (props.user && props.blog) {
+    if (props.user && props.blog && props.blog.user) {
       setSameUserStyle({ display: props.user.username === props.blog.user.username ? "" : "none" });
     }
   }, []);
@@ -72,7 +71,7 @@ export const Blog = props => {
           <button onClick={() => handleLike(props)}>like</button>
         </div>
         <div>
-          {props.blog.user.name}
+          {props.blog.user === null ? "No-one" : props.blog.user.name}
         </div>
         <button style={sameUserStyle} onClick={() => handleRemove(props)}>remove</button>
       </div>
