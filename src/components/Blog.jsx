@@ -63,16 +63,10 @@ export const Blog = props => {
       {props.blog.title}, {props.blog.author}
       <button onClick={toggleShowItem}>{showBlog ? "hide" : "view"}</button>
       <div style={showBlogStyle}>
-        <div>
-          {props.blog.url}
-        </div>
-        <div>
-          likes {props.blog.likes}
-          <button onClick={() => handleLike(props)}>like</button>
-        </div>
-        <div>
-          {props.blog.user === null ? "No-one" : props.blog.user.name}
-        </div>
+        {props.blog.url}<br/>
+        likes {props.blog.likes}
+        <button onClick={() => handleLike(props)}>like</button><br/>
+        {props.blog.user === null ? "No-one" : props.blog.user.name}
         <button style={sameUserStyle} onClick={() => handleRemove(props)}>remove</button>
       </div>
     </div>
@@ -92,6 +86,7 @@ export const Blogs = props => {
     console.log("Fetching blogs...");
     const blogs = await blogService.getAll();
     blogs.sort(sortByLikes).reverse();
+    console.info("Blogs:", blogs);
     setBlogs(blogs);
   };
 
