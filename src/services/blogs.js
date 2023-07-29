@@ -1,7 +1,7 @@
 import { parseToken } from "./token";
 
 
-const baseUrl = "/api/blogs";
+const baseUrl = "/api/blogs/";
 
 
 const getAll = async () => {
@@ -26,14 +26,14 @@ const create = async (newBlog, token) => {
     const result = await response.json();
     return result;
   } catch (e) {
-    console.error("lol", e);
+    console.error("lol, oh no", e);
   }
 };
 
 const update = async (blog, newLikes, token) => {
   try {
     const parsedToken = parseToken(token);
-    const url = baseUrl + "/" + blog.id;
+    const url = baseUrl + blog.id;
     console.info("Making PUT to", url, {likes: newLikes}, token);
 
     const response = await fetch(url, {
@@ -67,7 +67,8 @@ const deleteBlog = async (blog, token) => {
     console.info(result);
     return result;
   } catch (e) {
-    console.error("Oh nooo...", e);
+    console.error("JSON parsing for DELETE failed", e);
+    console.error("Data causing error:", blog, token, baseUrl + blog.id);
   }
 };
 
