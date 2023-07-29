@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import blogService from "../services/blogs";
 
 
-export const Blog = props => {
+export const Blog = ({ user, blog, handleLike, handleRemove}) => {
   const [showBlog, setShowBlog] = useState(false);
   const [sameUserStyle, setSameUserStyle] = useState({display: "none"});
 
@@ -22,91 +22,72 @@ export const Blog = props => {
   };
 
   useEffect(() => {
-    if (props.user && props.blog && props.blog.user) {
-      setSameUserStyle({ display: props.user.username === props.blog.user.username ? "" : "none" });
+    if (user && blog && blog.user) {
+      setSameUserStyle({ display: user.username === blog.user.username ? "" : "none" });
     }
   }, []);
 
-  const handleLike = async props => {
-    if (!props.user) {
+
+  return (
+    <div style={blogStyle}>
+      {blog.title}, {blog.author}
+      <button onClick={toggleShowItem}>{showBlog ? "hide" : "view"}</button>
+      <div style={showBlogStyle}>
+        {blog.url}<br/>
+        likes {blog.likes}
+        <button onClick={() => handleLike(blog, user)}>like</button><br/>
+        {blog.user === null ? "No-one" : blog.user.name}
+        <button style={sameUserStyle} onClick={() => handleRemove(blog, user)}>remove</button>
+      </div>
+    </div>
+  );
+};
+
+export const Blogs = ({ user, blogs, setBlogs }) => {
+  const handleRemove = async (blog, user) => {
+    if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      return;
+    }
+
+    try {
+      const deletedBlog = await blogService.deleteBlog(blog, user.token);
+      console.log("Blog deleted");
+      console.info("DELETE response", deletedBlog);
+      setBlogs(blogs.filter(blog => blog.id !== blog.id));
+    } catch (e) {
+      console.error("Failed to remove blog", e);
+    }
+  };
+
+  const handleLike = async (blog, user) => {
+    if (!user) {
       console.error("Not logged in");
       return;
     }
-    const newBlog = await blogService.update(props.blog, props.blog.likes + 1, props.user.token);
-    const updatedBlogs = props.blogs.map(blog => {
+    const newBlog = await blogService.update(blog, blog.likes + 1, user.token);
+    const updatedBlogs = blogs.map(blog => {
       if (blog.id === newBlog.id) { 
         blog.likes = newBlog.likes;
         return blog;
       } else {
         return blog;
       }});
-    props.setBlogs(updatedBlogs);
+    setBlogs(updatedBlogs);
     console.log("Liked post");
   };
-  
-  const handleRemove = async props => {
-    if (!window.confirm(`Remove blog ${props.blog.title} by ${props.blog.author}?`)) {
-      return;
-    }
-
-    try {
-      const deletedBlog = await blogService.deleteBlog(props.blog, props.user.token);
-      console.log(deletedBlog);
-      props.setBlogs(props.blogs.filter(blog => blog.id !== props.blog.id));
-    } catch (e) {
-      console.error("Failed to remove blog", e);
-    }
-  };
-
-  return (
-    <div style={blogStyle}>
-      {props.blog.title}, {props.blog.author}
-      <button onClick={toggleShowItem}>{showBlog ? "hide" : "view"}</button>
-      <div style={showBlogStyle}>
-        {props.blog.url}<br/>
-        likes {props.blog.likes}
-        <button onClick={() => handleLike(props)}>like</button><br/>
-        {props.blog.user === null ? "No-one" : props.blog.user.name}
-        <button style={sameUserStyle} onClick={() => handleRemove(props)}>remove</button>
-      </div>
-    </div>
-  );
-};
-
-export const Blogs = props => {
-  const [blogs, setBlogs] = useState([]);
-
-  const fetchBlogs = async () => {
-      const sortByLikes = (blogA, blogB) => {
-        if (blogA.likes > blogB.likes) { return 1; }
-        if (blogA.likes < blogB.likes) { return -1; }
-        return 0;
-      };
-
-    console.log("Fetching blogs...");
-    const blogs = await blogService.getAll();
-    blogs.sort(sortByLikes).reverse();
-    console.info("Blogs:", blogs);
-    setBlogs(blogs);
-  };
-
-  useEffect(() => {
-    fetchBlogs();
-  }, []);
 
   return (
     <div>
       <h3>List of blogs</h3>
-      <div style={{display: props.user ? "" : "none"}}>
+      <div style={{display: user ? "" : "none"}}>
       </div>
       {blogs.map(blog =>
         <Blog 
           key={blog.id} 
           blog={blog} 
-          blogs={blogs}
-          user={props.user} 
-          updateBlogs={fetchBlogs} 
-          setBlogs={setBlogs}
+          user={user} 
+          handleLike={handleLike} 
+          handleRemove={handleRemove}
         />
       )}
     </div>
@@ -114,20 +95,11 @@ export const Blogs = props => {
 };
 
 
-export const BlogForm = props => {
+export const BlogForm = ({ addBlog }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
 
-  const addBlog = async event => {
-    event.preventDefault();
-    console.log("Creating new blog...");
-    const result = await blogService.create({title: title, author: author, url: url}, props.user.token);
-    if (result) {
-      props.setMessage(`${title} by ${author} was added`);
-    }
-  };
-          
   return (
     <div>
       <h2>Create a new blog</h2>
@@ -168,17 +140,17 @@ export const BlogForm = props => {
 Blog.propTypes = {
   user: PropTypes.object,
   blog: PropTypes.object.isRequired,
-  updateBlogs: PropTypes.func.isRequired,
-  blogs: PropTypes.array.isRequired,
-  setBlogs: PropTypes.func.isRequired,
+  handleLike: PropTypes.func.isRequired,
+  handleRemove: PropTypes.func.isRequired,
 };
 
 Blogs.propTypes = {
   user: PropTypes.object,
-  handleLogout: PropTypes.func.isRequired,
+  blogs: PropTypes.array,
+  setBlogs: PropTypes.func.isRequired
 };
 
 BlogForm.propTypes = {
   user: PropTypes.object,
-  setMessage: PropTypes.func.isRequired,
+  addBlog: PropTypes.func.isRequired,
 };

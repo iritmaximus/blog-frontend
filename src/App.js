@@ -4,11 +4,13 @@ import { useState, useEffect } from "react";
 import { Blogs, BlogForm } from "./components/Blog";
 import { LoginForm } from "./components/Login";
 import { Togglable } from "./components/Togglable";
+import blogService from "./services/blogs";
 
 
 const App = () => {
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState(null);
+  const [blogs, setBlogs] = useState([]);
 
   useEffect(() => {
     const checkToken = () => {
@@ -33,11 +35,43 @@ const App = () => {
   }, [message]);
 
 
+  useEffect(() => {
+    const fetchBlogs = async () => {
+        const sortByLikes = (blogA, blogB) => {
+          if (blogA.likes > blogB.likes) { return 1; }
+          if (blogA.likes < blogB.likes) { return -1; }
+          return 0;
+        };
+
+      console.log("Fetching blogs...");
+      const blogs = await blogService.getAll();
+      blogs.sort(sortByLikes).reverse();
+      console.info("Blogs:", blogs);
+      setBlogs(blogs);
+    };
+    fetchBlogs();
+  }, []);
+
   const handleLogout = () => {
     console.log("Logging out...");
     window.localStorage.removeItem("token");
     setUser(null);
     setMessage("Logged out");
+  };
+
+  const handleCreate = async event => {
+    event.preventDefault();
+    console.log("Creating new blog...");
+
+    const title = event.target.title.value;
+    const author = event.target.author.value;
+    const url = event.target.url.value;
+
+    const result = await blogService.create({title: title, author: author, url: url}, user.token);
+    if (result) {
+      setMessage(`${title} by ${author} was added`);
+      setBlogs(blogs.concat(result));
+    }
   };
 
   const showIfLoggedIn = { display: user === null ? "none" : "" };
@@ -62,14 +96,15 @@ const App = () => {
         <button type="button" onClick={handleLogout}>logout</button>
         <Togglable buttonLabel="create new">
           <BlogForm 
-            setMessage={setMessage}
+            addBlog={handleCreate}
             user={user}
           />
         </Togglable>
       </div>
       <Blogs 
         user={user}
-        handleLogout={handleLogout}
+        blogs={blogs}
+        setBlogs={setBlogs}
       />
     </div>
   );
