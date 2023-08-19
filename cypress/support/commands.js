@@ -31,3 +31,9 @@ Cypress.Commands.add("login", ({ username, password }) => {
   localStorage.setItem("loggedBlogUser", JSON.stringify(body));
   cy.visit("http://localhost:5000");
 })
+
+Cypress.Commands.add("createUser", ({ name, username, password }) => {
+  const { body } = cy.request("POST", "http://localhost:3000/api/users", {
+    name: name, username: username, password: password
+  });
+})
