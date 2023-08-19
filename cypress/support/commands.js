@@ -56,4 +56,5 @@ Cypress.Commands.add("createBlog", ({ title, author, url}) => {
       url: url
     }
   });
+  cy.reload();
 })

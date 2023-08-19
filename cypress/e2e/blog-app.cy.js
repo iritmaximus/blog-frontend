@@ -42,7 +42,6 @@ describe("Blog app", function() {
 
     it("user can like blog", function() {
       cy.createBlog({ title: "Dvorak", author: "me, still", url: "dvorak.pumppi.dev" });
-      cy.reload();
       cy.contains("Dvorak");
 
       cy.get("#toggle-blog-visibility").click();
