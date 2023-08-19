@@ -6,6 +6,10 @@ const baseUrl = "/api/blogs/";
 
 const getAll = async () => {
   const response = await fetch(baseUrl);
+  if (response.status === 500) {
+    console.error(response);
+    return;
+  }
   const result = await response.json();
   return result;
 };
