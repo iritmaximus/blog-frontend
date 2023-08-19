@@ -64,18 +64,17 @@ const App = () => {
     setMessage("Logged out");
   };
 
-  const handleCreate = async event => {
-    event.preventDefault();
-    console.log("Creating new blog...");
-
-    const title = event.target.title.value;
-    const author = event.target.author.value;
-    const url = event.target.url.value;
+  const handleCreate = async blogObject => {
+    const title = blogObject.title;
+    const author = blogObject.author;
+    const url = blogObject.url;
 
     const result = await blogService.create({title: title, author: author, url: url}, user.token);
     if (result) {
       setMessage(`${title} by ${author} was added`);
       setBlogs(blogs.concat(result));
+    } else {
+      console.error("Something weird happened...", result);
     }
   };
 
@@ -101,7 +100,7 @@ const App = () => {
         <button type="button" onClick={handleLogout}>logout</button>
         <Togglable buttonLabel="create new">
           <BlogForm 
-            addBlog={handleCreate}
+            createBlog={handleCreate}
             user={user}
           />
         </Togglable>

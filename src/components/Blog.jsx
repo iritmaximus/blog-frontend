@@ -95,10 +95,26 @@ export const Blogs = ({ user, blogs, setBlogs }) => {
 };
 
 
-export const BlogForm = ({ addBlog }) => {
+export const BlogForm = ({ createBlog }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
+
+  const addBlog = async event => {
+    event.preventDefault();
+    console.log("Creating new blog...");
+
+    console.log(event.target.elements);
+
+    console.log(event.target.author, typeof(event.target.author));
+    console.log(event.target.author.value, typeof(event.target.author.value));
+
+    const title = event.target.title.value;
+    const author = event.target.author.value;
+    const url = event.target.url.value;
+
+    await createBlog({title: title, author: author, url: url});
+  }
 
   return (
     <div>
@@ -151,6 +167,5 @@ Blogs.propTypes = {
 };
 
 BlogForm.propTypes = {
-  user: PropTypes.object,
-  addBlog: PropTypes.func.isRequired,
+  createBlog: PropTypes.func.isRequired,
 };
