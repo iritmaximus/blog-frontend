@@ -31,13 +31,13 @@ export const Blog = ({ user, blog, handleLike, handleRemove}) => {
   return (
     <div style={blogStyle}>
       {blog.title}, {blog.author}
-      <button onClick={toggleShowItem}>{showBlog ? "hide" : "view"}</button>
+      <button id="toggle-blog-visibility" onClick={toggleShowItem}>{showBlog ? "hide" : "view"}</button>
       <div style={showBlogStyle}>
         {blog.url}<br/>
         likes {blog.likes}
-        <button onClick={() => handleLike(blog, user)}>like</button><br/>
+        <button id="like-blog" onClick={() => handleLike(blog, user)}>like</button><br/>
         {blog.user == null ? "No-one" : blog.user.name}
-        <button style={sameUserStyle} onClick={() => handleRemove(blog, user)}>remove</button>
+        <button id="remove-blog" style={sameUserStyle} onClick={() => handleRemove(blog, user)}>remove</button>
       </div>
     </div>
   );
@@ -123,6 +123,7 @@ export const BlogForm = ({ createBlog }) => {
         <div>
           title: 
           <input
+            id="blog-title"
             type="text"
             value={title}
             name="title"
@@ -133,6 +134,7 @@ export const BlogForm = ({ createBlog }) => {
         <div>
           author: 
           <input
+            id="blog-author"
             type="text"
             value={author}
             name="author"
@@ -143,6 +145,7 @@ export const BlogForm = ({ createBlog }) => {
         <div>
           url: 
           <input
+            id="blog-url"
             type="text"
             value={url}
             name="url"
@@ -150,7 +153,7 @@ export const BlogForm = ({ createBlog }) => {
             onChange={({ target }) => setUrl(target.value)}
           />
         </div>
-        <button type="submit">create</button>
+        <button id="create-blog" type="submit">create</button>
       </form>
     </div>
   );
