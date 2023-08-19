@@ -36,7 +36,7 @@ export const Blog = ({ user, blog, handleLike, handleRemove}) => {
         {blog.url}<br/>
         likes {blog.likes}
         <button onClick={() => handleLike(blog, user)}>like</button><br/>
-        {blog.user === null ? "No-one" : blog.user.name}
+        {blog.user == null ? "No-one" : blog.user.name}
         <button style={sameUserStyle} onClick={() => handleRemove(blog, user)}>remove</button>
       </div>
     </div>
@@ -81,7 +81,7 @@ export const Blogs = ({ user, blogs, setBlogs }) => {
       <h3>List of blogs</h3>
       <div style={{display: user ? "" : "none"}}>
       </div>
-      {blogs.map(blog =>
+      {blogs.length === 0 ? <p>No blogs</p> : blogs.map(blog =>
         <Blog 
           key={blog.id} 
           blog={blog} 

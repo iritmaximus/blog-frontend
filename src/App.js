@@ -44,10 +44,15 @@ const App = () => {
         };
 
       console.log("Fetching blogs...");
-      const blogs = await blogService.getAll();
-      blogs.sort(sortByLikes).reverse();
-      console.info("Blogs:", blogs);
-      setBlogs(blogs);
+      const fetchedBlogs = await blogService.getAll();
+      if (!fetchedBlogs) {
+        console.warn("No blogs gotten from fetch...");
+        setBlogs(blogs);
+        return;
+      }
+      fetchedBlogs.sort(sortByLikes).reverse();
+      console.info("Blogs:", fetchedBlogs);
+      setBlogs(fetchedBlogs);
     };
     fetchBlogs();
   }, []);
