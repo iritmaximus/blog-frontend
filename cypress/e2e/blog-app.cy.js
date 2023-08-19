@@ -27,15 +27,28 @@ describe("Blog app", function() {
 
   describe("when logged in", function() {
     beforeEach(function() {
-      cy.login({ username: "pöp123", password: "unsecure" })
+      cy.login({ username: "pöp123", password: "unsecure" });
     });
 
     it("user can create blog", function() {
-      console.log("hi lol");
+      cy.contains("create new").click();
+      cy.get("#blog-title").type("Somewhere...");
+      cy.get("#blog-author").type("me");
+      cy.get("#blog-url").type("pumppi.dev");
+      cy.get("#create-blog").click();
+
+      cy.contains("Somewhere...");
     });
 
     it("user can like blog", function() {
-      console.log("sometime soon this will be done");
+      cy.createBlog({ title: "Dvorak", author: "me, still", url: "dvorak.pumppi.dev" });
+      cy.reload();
+      cy.contains("Dvorak");
+
+      cy.get("#toggle-blog-visibility").click();
+      cy.contains("likes 0");
+      cy.get("#like-blog").click();
+      cy.contains("likes 1");
     });
 
     it("user can delete blog", function() {
