@@ -1,36 +1,33 @@
 describe("Blog app", function() {
   beforeEach(function() {
     cy.request("POST", "http://localhost:3000/api/test/reset");
-
-    const user = {
-      name: "Pöpö",
-      username: "pöp123",
-      password: "unsecure"
-    }
-
-    cy.request("POST", "http://localhost:3000/api/users", user);
+    cy.createUser({ name: "Pöpö", username: "pöp123", password: "unsecure" });
     cy.visit("http://localhost:5000");
   });
 
-  it("front-page can be opened", function() {
-    cy.contains("Blogs");
-    cy.contains("List of blogs");
-  });
-
-  it("user can log in", function() {
-    cy.get("#show-login").click();
-    cy.get("#username").type("pöp123");
-    cy.get("#password").type("unsecure");
-    cy.get("#login-button").click();
-    cy.contains("Pöpö logged in");
-  });
-
-  describe("when logged in", function() {
-    beforeEach(function() {
+  describe("Login", function() {
+    it("succeeds with correct credentials", function() {
       cy.get("#show-login").click();
       cy.get("#username").type("pöp123");
       cy.get("#password").type("unsecure");
       cy.get("#login-button").click();
+      cy.contains("Pöpö logged in");
+      cy.contains("Login successful");
+    });
+
+    it("fails with incorrect credentials", function() {
+      cy.get("#show-login").click();
+      cy.get("#username").type("pöp123");
+      cy.get("#password").type("aoeu");
+      cy.get("#login-button").click();
+      cy.contains("Incorrect username or password");
+      cy.get("html").should("not.contain", "Pöpö logged in");
+    })
+  });
+
+  describe("when logged in", function() {
+    beforeEach(function() {
+      cy.login({ username: "pöp123", password: "unsecure" })
     });
 
     it("user can create blog", function() {
