@@ -57,5 +57,16 @@ describe("Blog app", function() {
       cy.get("#remove-blog").click();
       cy.contains("Colemak").should("not.exist");
     });
-  })
+
+    it("other users' blogs don't display delete button", function() {
+      cy.createBlog({ title: "DAS", author: "Still asking..?", url: "das.pumppi.dev" });
+      cy.get("#toggle-blog-visibility").click();
+      cy.contains("remove").should("be.visible");
+      cy.createUser({ name: "HIIH", username: "hih", password: "totallysecure"});
+      cy.login({ username: "hih", password: "totallysecure" });
+      cy.get("#toggle-blog-visibility").click();
+      //cy.get("#remove-blog").should("not.exist");
+      cy.contains("remove").should("not.be.visible");
+    });
+  });
 });

@@ -97,7 +97,7 @@ const App = () => {
       </div>
       <div style={showIfLoggedIn}>
         {user === null ? "No-one" : user.name} logged in
-        <button type="button" onClick={handleLogout}>logout</button>
+        <button id="logout" type="button" onClick={handleLogout}>logout</button>
         <Togglable buttonLabel="create new">
           <BlogForm 
             createBlog={handleCreate}
