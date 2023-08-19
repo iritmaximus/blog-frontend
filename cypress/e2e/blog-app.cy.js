@@ -50,8 +50,12 @@ describe("Blog app", function() {
       cy.contains("likes 1");
     });
 
-    it("user can delete blog", function() {
-      console.log("Lol just wait");
+    it("user that created the blog can delete it", function() {
+      cy.createBlog({ title: "Colemak", author: "Guess it lol", url: "colemak.pumppi.dev" });
+      cy.get("#toggle-blog-visibility").click();
+      cy.contains("Colemak");
+      cy.get("#remove-blog").click();
+      cy.contains("Colemak").should("not.exist");
     });
   })
 });
