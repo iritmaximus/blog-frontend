@@ -7,7 +7,10 @@ import { Blog } from "../components/Blog";
 
 
 
-describe("Blog", () => {
+describe("<Blog />", () => {
+  const handleLike = jest.fn();
+  const handleRemove = jest.fn();
+
   beforeEach(() => {
     const blog = {
       title: "Somewhere over the rainbow",
@@ -22,9 +25,7 @@ describe("Blog", () => {
       name: "Pöp",
     };
     const blogs = [blog];
-    const setBlogs = jest.fn();
-    const updateBlogs = jest.fn();
-    render(<Blog user={user} blog={blog} updateBlogs={updateBlogs} blogs={blogs} setBlogs={setBlogs} />);
+    render(<Blog user={user} blog={blog} handleLike={handleLike} handleRemove={handleRemove} />);
   });
 
   it("renders only title + author by default", async () => {
@@ -44,20 +45,12 @@ describe("Blog", () => {
     expect(element).not.toHaveStyle("display: none");
   });
   it("if like is pressed twice, the likes increase by 2", async () => {
-    const token = fetch("/api/login", {
-      method: "POST",
-      body: {
-        "username": "hi"
-      }
-    });
-
+    const token = "thisisatoken,trustme";
     const user = userEvent.setup();
     const button = screen.getByText("like");
     await user.click(button);
     await user.click(button);
-    const element = screen.getByText("likes", { exact: false });
-
-    expect(element).toContain(12);
+    expect(handleLike.mock.calls).toHaveLength(2);
   });
   it.todo("form calls handlerfunc with correct data");
 });
