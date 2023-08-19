@@ -7,7 +7,7 @@ describe("Blog app", function() {
 
   describe("Login", function() {
     it("succeeds with correct credentials", function() {
-      cy.get("#show-login").click();
+      cy.contains("login").click();
       cy.get("#username").type("pöp123");
       cy.get("#password").type("unsecure");
       cy.get("#login-button").click();
@@ -16,7 +16,7 @@ describe("Blog app", function() {
     });
 
     it("fails with incorrect credentials", function() {
-      cy.get("#show-login").click();
+      cy.contains("login").click();
       cy.get("#username").type("pöp123");
       cy.get("#password").type("aoeu");
       cy.get("#login-button").click();
