@@ -29,15 +29,15 @@ export const Blog = ({ user, blog, handleLike, handleRemove}) => {
 
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className="blog">
       {blog.title}, {blog.author}
-      <button id="toggle-blog-visibility" onClick={toggleShowItem}>{showBlog ? "hide" : "view"}</button>
+      <button className="toggle-blog-visibility" onClick={toggleShowItem}>{showBlog ? "hide" : "view"}</button>
       <div style={showBlogStyle}>
         {blog.url}<br/>
         likes {blog.likes}
-        <button id="like-blog" onClick={() => handleLike(blog, user)}>like</button><br/>
+        <button className="like-blog" onClick={() => handleLike(blog, user)}>like</button><br/>
         {blog.user == null ? "No-one" : blog.user.name}
-        <button id="remove-blog" style={sameUserStyle} onClick={() => handleRemove(blog, user)}>remove</button>
+        <button className="remove-blog" style={sameUserStyle} onClick={() => handleRemove(blog, user)}>remove</button>
       </div>
     </div>
   );
