@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 import blogService from "../services/blogs";
 
-
-export const Blog = ({ user, blog, handleLike, handleRemove}) => {
+export const Blog = ({ user, blog, handleLike, handleRemove }) => {
   const [showBlog, setShowBlog] = useState(false);
-  const [sameUserStyle, setSameUserStyle] = useState({display: "none"});
+  const [sameUserStyle, setSameUserStyle] = useState({ display: "none" });
 
   const toggleShowItem = () => {
     setShowBlog(!showBlog);
@@ -23,21 +22,34 @@ export const Blog = ({ user, blog, handleLike, handleRemove}) => {
 
   useEffect(() => {
     if (user && blog && blog.user) {
-      setSameUserStyle({ display: user.username === blog.user.username ? "" : "none" });
+      setSameUserStyle({
+        display: user.username === blog.user.username ? "" : "none",
+      });
     }
   }, []);
-
 
   return (
     <div style={blogStyle} className="blog">
       {blog.title}, {blog.author}
-      <button className="toggle-blog-visibility" onClick={toggleShowItem}>{showBlog ? "hide" : "view"}</button>
+      <button className="toggle-blog-visibility" onClick={toggleShowItem}>
+        {showBlog ? "hide" : "view"}
+      </button>
       <div style={showBlogStyle}>
-        {blog.url}<br/>
+        {blog.url}
+        <br />
         likes {blog.likes}
-        <button className="like-blog" onClick={() => handleLike(blog, user)}>like</button><br/>
+        <button className="like-blog" onClick={() => handleLike(blog, user)}>
+          like
+        </button>
+        <br />
         {blog.user == null ? "No-one" : blog.user.name}
-        <button className="remove-blog" style={sameUserStyle} onClick={() => handleRemove(blog, user)}>remove</button>
+        <button
+          className="remove-blog"
+          style={sameUserStyle}
+          onClick={() => handleRemove(blog, user)}
+        >
+          remove
+        </button>
       </div>
     </div>
   );
@@ -53,7 +65,7 @@ export const Blogs = ({ user, blogs, setBlogs }) => {
       const deletedBlog = await blogService.deleteBlog(blog, user.token);
       console.log("Blog deleted");
       console.info("DELETE response", deletedBlog);
-      setBlogs(blogs.filter(blog => blog.id !== blog.id));
+      setBlogs(blogs.filter((blog) => blog.id !== blog.id));
     } catch (e) {
       console.error("Failed to remove blog", e);
     }
@@ -65,13 +77,14 @@ export const Blogs = ({ user, blogs, setBlogs }) => {
       return;
     }
     const newBlog = await blogService.update(blog, blog.likes + 1, user.token);
-    const updatedBlogs = blogs.map(blog => {
-      if (blog.id === newBlog.id) { 
+    const updatedBlogs = blogs.map((blog) => {
+      if (blog.id === newBlog.id) {
         blog.likes = newBlog.likes;
         return blog;
       } else {
         return blog;
-      }});
+      }
+    });
     setBlogs(updatedBlogs);
     console.log("Liked post");
   };
@@ -79,49 +92,51 @@ export const Blogs = ({ user, blogs, setBlogs }) => {
   return (
     <div>
       <h3>List of blogs</h3>
-      <div style={{display: user ? "" : "none"}}>
-      </div>
-      {blogs.length === 0 ? <p>No blogs</p> : blogs.map(blog =>
-        <Blog 
-          key={blog.id} 
-          blog={blog} 
-          user={user} 
-          handleLike={handleLike} 
-          handleRemove={handleRemove}
-        />
+      <div style={{ display: user ? "" : "none" }}></div>
+      {blogs.length === 0 ? (
+        <p>No blogs</p>
+      ) : (
+        blogs.map((blog) => (
+          <Blog
+            key={blog.id}
+            blog={blog}
+            user={user}
+            handleLike={handleLike}
+            handleRemove={handleRemove}
+          />
+        ))
       )}
     </div>
   );
 };
-
 
 export const BlogForm = ({ createBlog }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
 
-  const addBlog = async event => {
+  const addBlog = async (event) => {
     event.preventDefault();
     console.log("Creating new blog...");
 
     console.log(event.target.elements);
 
-    console.log(event.target.author, typeof(event.target.author));
-    console.log(event.target.author.value, typeof(event.target.author.value));
+    console.log(event.target.author, typeof event.target.author);
+    console.log(event.target.author.value, typeof event.target.author.value);
 
     const title = event.target.title.value;
     const author = event.target.author.value;
     const url = event.target.url.value;
 
-    await createBlog({title: title, author: author, url: url});
-  }
+    await createBlog({ title: title, author: author, url: url });
+  };
 
   return (
     <div>
       <h2>Create a new blog</h2>
       <form onSubmit={addBlog}>
         <div>
-          title: 
+          title:
           <input
             id="blog-title"
             type="text"
@@ -132,7 +147,7 @@ export const BlogForm = ({ createBlog }) => {
           />
         </div>
         <div>
-          author: 
+          author:
           <input
             id="blog-author"
             type="text"
@@ -143,7 +158,7 @@ export const BlogForm = ({ createBlog }) => {
           />
         </div>
         <div>
-          url: 
+          url:
           <input
             id="blog-url"
             type="text"
@@ -153,7 +168,9 @@ export const BlogForm = ({ createBlog }) => {
             onChange={({ target }) => setUrl(target.value)}
           />
         </div>
-        <button id="create-blog" type="submit">create</button>
+        <button id="create-blog" type="submit">
+          create
+        </button>
       </form>
     </div>
   );
@@ -169,7 +186,7 @@ Blog.propTypes = {
 Blogs.propTypes = {
   user: PropTypes.object,
   blogs: PropTypes.array,
-  setBlogs: PropTypes.func.isRequired
+  setBlogs: PropTypes.func.isRequired,
 };
 
 BlogForm.propTypes = {

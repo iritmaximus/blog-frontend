@@ -1,8 +1,6 @@
 import { parseToken } from "./token";
 
-
 const baseUrl = "/api/blogs/";
-
 
 const getAll = async () => {
   const response = await fetch(baseUrl);
@@ -23,9 +21,9 @@ const create = async (newBlog, token) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": parsedToken
+        Authorization: parsedToken,
       },
-      body: JSON.stringify(newBlog)
+      body: JSON.stringify(newBlog),
     });
     const result = await response.json();
     return result;
@@ -38,15 +36,15 @@ const update = async (blog, newLikes, token) => {
   try {
     const parsedToken = parseToken(token);
     const url = baseUrl + blog.id;
-    console.info("Making PUT to", url, {likes: newLikes}, token);
+    console.info("Making PUT to", url, { likes: newLikes }, token);
 
     const response = await fetch(url, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": parsedToken
+        Authorization: parsedToken,
       },
-      body: JSON.stringify({likes: newLikes})
+      body: JSON.stringify({ likes: newLikes }),
     });
     const result = await response.json();
     console.info(result);
@@ -57,15 +55,14 @@ const update = async (blog, newLikes, token) => {
   }
 };
 
-
 const deleteBlog = async (blog, token) => {
   try {
     const parsedToken = parseToken(token);
     const response = await fetch(baseUrl + blog.id, {
       method: "DELETE",
       headers: {
-        "Authorization": parsedToken
-      }
+        Authorization: parsedToken,
+      },
     });
     const result = await response.json();
     console.info(result);

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 
-export const Togglable = props => {
+export const Togglable = (props) => {
   const [visible, setVisible] = useState(false);
 
   const toggleVisibility = () => {

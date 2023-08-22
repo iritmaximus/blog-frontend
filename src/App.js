@@ -6,7 +6,6 @@ import { LoginForm } from "./components/Login";
 import { Togglable } from "./components/Togglable";
 import blogService from "./services/blogs";
 
-
 const App = () => {
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState(null);
@@ -24,24 +23,26 @@ const App = () => {
 
     checkToken();
   }, []);
-  
+
   useEffect(() => {
     if (message) {
       setTimeout(() => {
         setMessage(null);
       }, 3000);
     }
-
   }, [message]);
-
 
   useEffect(() => {
     const fetchBlogs = async () => {
-        const sortByLikes = (blogA, blogB) => {
-          if (blogA.likes > blogB.likes) { return 1; }
-          if (blogA.likes < blogB.likes) { return -1; }
-          return 0;
-        };
+      const sortByLikes = (blogA, blogB) => {
+        if (blogA.likes > blogB.likes) {
+          return 1;
+        }
+        if (blogA.likes < blogB.likes) {
+          return -1;
+        }
+        return 0;
+      };
 
       console.log("Fetching blogs...");
       const fetchedBlogs = await blogService.getAll();
@@ -64,12 +65,15 @@ const App = () => {
     setMessage("Logged out");
   };
 
-  const handleCreate = async blogObject => {
+  const handleCreate = async (blogObject) => {
     const title = blogObject.title;
     const author = blogObject.author;
     const url = blogObject.url;
 
-    const result = await blogService.create({title: title, author: author, url: url}, user.token);
+    const result = await blogService.create(
+      { title: title, author: author, url: url },
+      user.token,
+    );
     if (result) {
       setMessage(`${title} by ${author} was added`);
       setBlogs(blogs.concat(result));
@@ -89,27 +93,19 @@ const App = () => {
       </div>
       <div style={showIfLoggedOut}>
         <Togglable buttonLabel="login">
-          <LoginForm 
-            setUser={setUser}
-            setMessage={setMessage}
-          />
+          <LoginForm setUser={setUser} setMessage={setMessage} />
         </Togglable>
       </div>
       <div style={showIfLoggedIn}>
         {user === null ? "No-one" : user.name} logged in
-        <button id="logout" type="button" onClick={handleLogout}>logout</button>
+        <button id="logout" type="button" onClick={handleLogout}>
+          logout
+        </button>
         <Togglable buttonLabel="create new">
-          <BlogForm 
-            createBlog={handleCreate}
-            user={user}
-          />
+          <BlogForm createBlog={handleCreate} user={user} />
         </Togglable>
       </div>
-      <Blogs 
-        user={user}
-        blogs={blogs}
-        setBlogs={setBlogs}
-      />
+      <Blogs user={user} blogs={blogs} setBlogs={setBlogs} />
     </div>
   );
 };

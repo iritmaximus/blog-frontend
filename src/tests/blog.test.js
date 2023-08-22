@@ -5,8 +5,6 @@ import userEvent from "@testing-library/user-event";
 
 import { Blog } from "../components/Blog";
 
-
-
 describe("<Blog />", () => {
   const handleLike = jest.fn();
   const handleRemove = jest.fn();
@@ -17,7 +15,7 @@ describe("<Blog />", () => {
       author: "I don't know lol",
       url: "someurlprob.org",
       likes: 10,
-      user: "not important atm"
+      user: "not important atm",
     };
     const user = {
       token: "not important atm",
@@ -25,11 +23,20 @@ describe("<Blog />", () => {
       name: "Pöp",
     };
     const blogs = [blog];
-    render(<Blog user={user} blog={blog} handleLike={handleLike} handleRemove={handleRemove} />);
+    render(
+      <Blog
+        user={user}
+        blog={blog}
+        handleLike={handleLike}
+        handleRemove={handleRemove}
+      />,
+    );
   });
 
   it("renders only title + author by default", async () => {
-    const element = screen.getByText("Somewhere over the rainbow", { exact: false });
+    const element = screen.getByText("Somewhere over the rainbow", {
+      exact: false,
+    });
     expect(element).toBeDefined();
   });
   it("doesn't render url + likes by default", () => {

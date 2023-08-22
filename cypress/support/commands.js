@@ -26,21 +26,24 @@
 
 Cypress.Commands.add("login", ({ username, password }) => {
   cy.request("POST", "http://localhost:3000/api/login", {
-    username, password
+    username,
+    password,
   }).then(({ body }) => {
     console.log("Response:", body);
     localStorage.setItem("token", JSON.stringify(body));
     cy.visit("http://localhost:5000");
   });
-})
+});
 
 Cypress.Commands.add("createUser", ({ name, username, password }) => {
   const { body } = cy.request("POST", "http://localhost:3000/api/users", {
-    name: name, username: username, password: password
+    name: name,
+    username: username,
+    password: password,
   });
-})
+});
 
-Cypress.Commands.add("createBlog", ({ title, author, url}) => {
+Cypress.Commands.add("createBlog", ({ title, author, url }) => {
   const token = JSON.parse(localStorage.getItem("token")).token;
   console.log("token:", token);
 
@@ -48,13 +51,13 @@ Cypress.Commands.add("createBlog", ({ title, author, url}) => {
     method: "POST",
     url: "http://localhost:3000/api/blogs",
     headers: {
-      Authorization: "Bearer " + token
+      Authorization: "Bearer " + token,
     },
     body: {
       title: title,
       author: author,
-      url: url
-    }
+      url: url,
+    },
   });
   cy.reload();
-})
+});

@@ -3,18 +3,17 @@ import PropTypes from "prop-types";
 
 import { login } from "../services/login";
 
-
-export const LoginForm = props => {
+export const LoginForm = (props) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = async event => {
+  const handleLogin = async (event) => {
     event.preventDefault();
     console.info("Login pressed...");
 
     const userForToken = {
       username: username,
-      password: password
+      password: password,
     };
 
     const token = await login(userForToken);
@@ -52,7 +51,9 @@ export const LoginForm = props => {
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button id="login-button" type="submit">login</button>
+        <button id="login-button" type="submit">
+          login
+        </button>
       </form>
     </div>
   );
